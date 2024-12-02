@@ -34,6 +34,8 @@ class Program
             Console.WriteLine($"Added Left: {left.Count()} and Right: {right.Count()} entries");
 
             // forgive me, for I have used linq.
+            // but it should be n(logn). SortedSet.Contains() is O(logn). 
+            // ToDictionary should be O(1) most of the time, may be (O(n) when increasing size.)
             var set = right.Where(x => left.Contains(x.Key)).ToDictionary(t => t.Key, t => t.Value);
 
             Console.WriteLine($"set count {set.Count()}");
