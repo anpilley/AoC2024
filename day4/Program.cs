@@ -78,7 +78,7 @@ class Program
     }
 
     // get every valid coordinate set for a direction. Excludes ones that cross the edge.
-    // hypothesis: we'll need to wrap in part 2.
+    // hypothesis: we'll need to wrap in part 2. edit: nope :(
     static IDictionary<Direction, (int, int, char)[]> GetCoords(int x, int y, int xlen, int ylen)
     {
         Dictionary<Direction, (int, int, char)[]> coords = new();
