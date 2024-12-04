@@ -3,14 +3,10 @@
 
 enum Direction
 {
-    Up,
-    UpRight,
-    Right,
-    DownRight,
-    Down,
-    DownLeft,
-    Left,
-    UpLeft
+    One,
+    Two,
+    Three,
+    Four
 }
 
 class Program
@@ -43,16 +39,17 @@ class Program
             int counter = 0;
             for(i = 0; i < input.Length; i++)
             {
-                if(input[i] == 'X')
+                if(input[i] == 'A')
                 {
                     (int, int) coords = IndexToCoordinates(i, ylen);
                     var set = GetCoords(coords.Item1, coords.Item2, xlen, ylen);
 
                     Console.WriteLine($"Checking around {coords}, directions {set.Count()}");
                     
+                    bool valid = false;
                     foreach(var dir in set)
                     {
-                        bool valid = true;
+                        bool dirvalid = true;
                         foreach(var c in dir.Value){
                             int x1 = c.Item1;
                             int y1 = c.Item2;
@@ -60,20 +57,23 @@ class Program
 
                             if(input[CoordToIndex(x1, y1, ylen)] != t)
                             {
-                                valid = false;
+                                dirvalid = false;
                                 break;
                             }
                         }
-                        if(valid)
-                            counter++;
-                        
+
+                        if(dirvalid){
+                            valid = true;
+                            break;
+                        }
                     }
+                    
+                    if(valid)
+                        counter++;
                 }
             }
 
             Console.WriteLine($"Count: {counter}");
-
-
         }
     }
 
@@ -83,77 +83,49 @@ class Program
     {
         Dictionary<Direction, (int, int, char)[]> coords = new();
 
-        // up
-        if(!(x-3 < 0))
-        {
-            coords.Add(Direction.Up, new (int, int, char)[3]);
-            coords[Direction.Up][0] = (x-1, y, 'M');
-            coords[Direction.Up][1] = (x-2, y, 'A');
-            coords[Direction.Up][2] = (x-3, y, 'S');
-        }
+        // if we're on an edge, nothing to check.
+        if(x == 0 || x == xlen-1 || y == 0 || y==ylen-1)
+            return coords;
 
-        // upright
-        if(!(x-3 < 0) && !(y+3 >= ylen))
-        {
-            coords.Add(Direction.UpRight, new (int, int, char)[3]);
-            coords[Direction.UpRight][0] = (x-1, y+1, 'M');
-            coords[Direction.UpRight][1] = (x-2, y+2, 'A');
-            coords[Direction.UpRight][2] = (x-3, y+3, 'S');
-        }
+        // One
+        // M M
+        //  A
+        // S S
+        coords.Add(Direction.One, new(int, int, char)[4]);
+        coords[Direction.One][0] = (x-1, y-1, 'M');
+        coords[Direction.One][1] = (x+1, y-1, 'M');
+        coords[Direction.One][2] = (x-1, y+1, 'S');
+        coords[Direction.One][3] = (x+1, y+1, 'S');
 
-        // right
-        if(!(y+3 >= ylen))
-        {
-            coords.Add(Direction.Right, new (int, int, char)[3]);
-            coords[Direction.Right][0] = (x, y+1, 'M');
-            coords[Direction.Right][1] = (x, y+2, 'A');
-            coords[Direction.Right][2] = (x, y+3, 'S');
-        }
+        // Two
+        // S M
+        //  A
+        // S M
+        coords.Add(Direction.Two, new(int, int, char)[4]);
+        coords[Direction.Two][0] = (x-1, y-1, 'S');
+        coords[Direction.Two][1] = (x+1, y-1, 'M');
+        coords[Direction.Two][2] = (x-1, y+1, 'S');
+        coords[Direction.Two][3] = (x+1, y+1, 'M');
 
-        // downright
-        if(!(x+3 >= xlen) && !(y+3 >= ylen))
-        {
-            coords.Add(Direction.DownRight, new (int, int, char)[3]);
-            coords[Direction.DownRight][0] = (x+1, y+1, 'M');
-            coords[Direction.DownRight][1] = (x+2, y+2, 'A');
-            coords[Direction.DownRight][2] = (x+3, y+3, 'S');
-        }
+        // Three
+        // S S
+        //  A
+        // M M
+        coords.Add(Direction.Three, new(int, int, char)[4]);
+        coords[Direction.Three][0] = (x-1, y-1, 'S');
+        coords[Direction.Three][1] = (x+1, y-1, 'S');
+        coords[Direction.Three][2] = (x-1, y+1, 'M');
+        coords[Direction.Three][3] = (x+1, y+1, 'M');
 
-        // down
-        if(!(x+3 >= xlen))
-        {
-            coords.Add(Direction.Down, new (int, int, char)[3]);
-            coords[Direction.Down][0] = (x+1, y, 'M');
-            coords[Direction.Down][1] = (x+2, y, 'A');
-            coords[Direction.Down][2] = (x+3, y, 'S');
-        }
-
-        // downleft
-        if(!(x+3 >= xlen) && !(y-3 < 0))
-        {
-            coords.Add(Direction.DownLeft, new (int, int, char)[3]);
-            coords[Direction.DownLeft][0] = (x+1, y-1, 'M');
-            coords[Direction.DownLeft][1] = (x+2, y-2, 'A');
-            coords[Direction.DownLeft][2] = (x+3, y-3, 'S');
-        }
-
-        // left
-        if(!(y-3 < 0))
-        {
-            coords.Add(Direction.Left, new (int, int, char)[3]);
-            coords[Direction.Left][0] = (x, y-1, 'M');
-            coords[Direction.Left][1] = (x, y-2, 'A');
-            coords[Direction.Left][2] = (x, y-3, 'S');
-        }
-
-        // upleft
-        if(!(x-3 < 0) && !(y-3 < 0))
-        {
-            coords.Add(Direction.UpLeft, new (int, int, char)[3]);
-            coords[Direction.UpLeft][0] = (x-1, y-1, 'M');
-            coords[Direction.UpLeft][1] = (x-2, y-2, 'A');
-            coords[Direction.UpLeft][2] = (x-3, y-3, 'S');
-        }
+        // four
+        // M S
+        //  A
+        // M S
+        coords.Add(Direction.Four, new(int, int, char)[4]);
+        coords[Direction.Four][0] = (x-1, y-1, 'M');
+        coords[Direction.Four][1] = (x+1, y-1, 'S');
+        coords[Direction.Four][2] = (x-1, y+1, 'M');
+        coords[Direction.Four][3] = (x+1, y+1, 'S');
 
         return coords;
 
