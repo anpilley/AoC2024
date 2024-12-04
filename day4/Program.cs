@@ -30,11 +30,8 @@ class Program
             int i = 0;
             foreach(var row in data)
             {
-                foreach(char c in row)
-                {
-                    input[i] = c;
-                    i++;
-                }
+                row.CopyTo(0, input, CoordToIndex(i,0, ylen), row.Length);
+                i++;
             }
             int counter = 0;
             for(i = 0; i < input.Length; i++)
